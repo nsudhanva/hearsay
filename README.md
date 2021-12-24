@@ -1,7 +1,9 @@
 # hearsay
-Platform to aggregate information received from social media that one can substantiate but adequately.
+Platform to aggregate information received from social media that one can substantiate but inadequately.
 
 ## Setting Up Environment Variables
+
+Create the following files at the root of the repository
 
 1. ```.env.client.dev```
 
@@ -26,7 +28,7 @@ DATABASE_URL=postgresql://hearsay:hearsay@db:5432/hearsay
 DEBUG=1
 ```
 
-# Installation
+# Running
 
 - `docker-compose build`
 - `docker-compose up`
