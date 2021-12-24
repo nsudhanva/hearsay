@@ -28,8 +28,15 @@ DATABASE_URL=postgresql://hearsay:hearsay@db:5432/hearsay
 DEBUG=1
 ```
 
-# Running
+## Running
 
 - `docker-compose build`
 - `docker-compose up`
 
+## Usage
+
+Open your browser and visit the following:
+
+- `hearsay.localhost` - Frontend (React App)
+- `api.hearsay.localhost` - Backend (Django App)
+- `pgadmin.hearsay.localhost` - PG Admin (Database)
