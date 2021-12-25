@@ -1,0 +1,22 @@
+_id: spc_15065b322af84fcdb0fb7524eacb567b
+type: ApiSpec
+parentId: wrk_bc3ff6d1fc0b45d1a315deec146d4199
+modified: 1640405249534
+created: 1640405080822
+fileName: insomnia.yaml
+contents: >-
+  title: Hearsay
+
+  description: Platform to aggregate information received from social media that one can substantiate but inadequately
+
+  termsOfService: https://hearsay.tech/terms/
+
+  contact:
+    name: API Support
+    url: https://hearsay.tech/support
+    email: support@hearsay.tech
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+  version: 0.0.1
+contentType: yaml
