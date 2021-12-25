@@ -35,7 +35,14 @@ DEBUG=1
 
 ## Usage
 
-Open your browser and visit the following:
+### Download and install [Insomnia](https://insomnia.rest/)
+
+- Create a [personal access token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token) on GitHub
+- Enter your github credentials in the UI
+- Click on import project and import the `.insomnia` folder from the root.
+- Make changes to the API yaml file if required and push changes from insomnia.
+
+### Open your browser and visit the following:
 
 - `hearsay.localhost` - Frontend (React App)
 - `api.hearsay.localhost` - Backend (Django App)
