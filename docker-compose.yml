@@ -1,43 +1,30 @@
 ---
 services:
-  client:
-    build: ./client
-    command: yarn start
-    container_name: hearsay-client
-    depends_on:
-      - server
-    env_file: .env.client.dev
-    expose:
-      - 3000
-    labels:
-      - traefik.enable=true
-      - traefik.http.routers.client.rule=Host(`hearsay.localhost`)
-      - traefik.port=80
-    stdin_open: true
-    volumes:
-      - ./client:/app
-      - /app/node_modules
+  # client:
+  #   build: ./client
+  #   command: yarn start
+  #   container_name: hearsay-client
+  #   depends_on:
+  #     - server
+  #   env_file: .env.client.dev
+  #   expose:
+  #     - 3000
+  #   labels:
+  #     - traefik.enable=true
+  #     - traefik.http.routers.client.rule=Host(`hearsay.localhost`)
+  #     - traefik.port=80
+  #   stdin_open: true
+  #   volumes:
+  #     - ./client:/app
+  #     - /app/node_modules
   db:
     container_name: hearsay-db-1
     env_file: .env.db.dev
-    expose:
-      - 5432
-    image: postgres:13-alpine
+    ports:
+      - 5433:5432
+    image: postgres:13.9
     volumes:
       - postgres_data:/var/lib/postgresql/data/
-  pgadmin:
-    container_name: hearsay-pgadmin-1
-    depends_on:
-      - db
-    env_file: .env.db.dev
-    image: dpage/pgadmin4
-    labels:
-      - traefik.enable=true
-      - traefik.http.routers.pgadmin.rule=Host(`pgadmin.hearsay.localhost`)
-      - traefik.port=80
-    restart: always
-    volumes:
-      - pgadmin-data:/var/lib/pgadmin
   server:
     build: ./app
     command: bash -c 'while !</dev/tcp/db/5432; do sleep 1; done; python manage.py migrate && python manage.py runserver 0.0.0.0:8000'
@@ -45,22 +32,10 @@ services:
     depends_on:
       - db
     env_file: .env.server.dev
-    expose:
-      - 8000
-    labels:
-      - traefik.enable=true
-      - traefik.http.routers.django.rule=Host(`api.hearsay.localhost`)
-      - traefik.port=80
+    ports:
+      - 8000:8000
     volumes:
       - ./app:/app
-  traefik:
-    container_name: hearsay-traefik
-    image: traefik:v2.5
-    ports:
-      - '80:80'
-    volumes:
-      - $PWD/traefik.dev.toml:/etc/traefik/traefik.toml
-      - /var/run/docker.sock:/var/run/docker.sock:ro
 version: '3.8'
 volumes:
   pgadmin-data: null

@@ -6,13 +6,17 @@
 />
 
 <style>
+  .green-button {
+    background-color: green;
+    color: white;
+  }
   .popup {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(255, 255, 255, 0.8);
+    background: rgba(255, 255, 255, 0.95);
     border-radius: 5px;
     padding: 20px;
     box-sizing: border-box;
@@ -61,6 +65,16 @@
     padding: 0;
     font-size: 0.8em;
   }
+
+  .radio-buttons {
+    display: inline-block;
+    column-count: 2;
+  }
+
+  .vote-button {
+    text-align: center;
+    color: white;
+  }
 </style>
 
 <div class="container">
@@ -89,6 +103,7 @@
           </small>
         </p>
       </div>
+
       <div class="popup" style="display: none">
         <h3 class="popup-title">{{ article.headline }}</h3>
         <p class="popup-description">{{ article.description }}</p>
@@ -103,13 +118,72 @@
           </li>
           {% endfor %}
         </ul>
+        <div class="radio-buttons">
+          <input
+            type="radio"
+            name="vote"
+            value="1"
+            id="vote-1"
+            class="translucent-radio"
+          />
+          <label for="vote-1">Liberal</label>
+          <br />
+          <input
+            type="radio"
+            name="vote"
+            value="2"
+            id="vote-2"
+            class="translucent-radio"
+          />
+          <label for="vote-2">Conservative</label>
+          <br />
+          <input
+            type="radio"
+            name="vote"
+            value="3"
+            id="vote-3"
+            class="translucent-radio"
+          />
+          <label for="vote-3">Socialist</label>
+          <br />
+          <input
+            type="radio"
+            name="vote"
+            value="4"
+            id="vote-4"
+            class="translucent-radio"
+          />
+          <label for="vote-4">Autocratic</label>
+        </div>
+        <div class="vote-button">
+          <button
+            type="button"
+            class="green-button"
+            data-article-id="{{ article.id }}"
+          >
+            Vote
+          </button>
+        </div>
       </div>
     </div>
     {% endfor %}
   </div>
 </div>
 
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+
 <script>
+  $.ajaxSetup({
+    beforeSend: function (xhr, settings) {
+      if (
+        !/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type) &&
+        !this.crossDomain
+      ) {
+        xhr.setRequestHeader("X-CSRFToken", "{{ csrf_token }}");
+      }
+    },
+  });
+
   function showPopup(card) {
     var popup = card.querySelector(".popup");
     popup.style.display = "block";
@@ -119,4 +193,26 @@
     var popup = card.querySelector(".popup");
     popup.style.display = "none";
   }
+
+  $(".green-button").click(function () {
+    var articleId = $(this).data("article-id"); // Get the article id
+    var data = {
+      option: $('input[name="vote"]:checked').val(),
+      article_id: articleId, // Pass the article id as part of the data
+    };
+
+    $(this).prop("disabled", true);
+    $(this).css("background-color", "grey");
+
+    $.ajax({
+      url: "/news/",
+      type: "POST",
+      data: data,
+
+      success: function (response) {
+        // Uncheck the selected radio button
+        $('input[name="vote"]:checked').prop("checked", false);
+      },
+    });
+  });
 </script>
