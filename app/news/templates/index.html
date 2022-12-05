@@ -171,7 +171,11 @@
           >
             Vote
           </button>
-          <button type="button" class="view-insights-button">
+          <button
+            type="button"
+            class="view-insights-button"
+            data-chart-id="{{ article.liberal }}"
+          >
             View Insights
           </button>
 
@@ -195,7 +199,7 @@
 <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js"></script>
 
-<script>
+<script text="javascript">
   $.ajaxSetup({
     beforeSend: function (xhr, settings) {
       if (
@@ -207,12 +211,18 @@
     },
   });
 
-  var chartData = [];
-
   const viewInsightsButtons = document.querySelectorAll(
     ".view-insights-button"
   );
   const modals = document.querySelectorAll(".modal");
+
+  // var articles = "{{ articles.values|safe }}";
+  // articles = articles.replace("<QuerySet ", "");
+  // articles = articles.replace(">", "");
+  // articles = articles.replace("[", "");
+  // articles = articles.replace("]", "");
+  // var articles = JSON.parse(articles);
+  // console.log(articles);
 
   viewInsightsButtons.forEach((button, index) => {
     button.addEventListener("click", function () {
@@ -225,7 +235,9 @@
           labels: ["Liberal", "Conservative", "Socialist", "Autocratic"],
           datasets: [
             {
-              data: chartData,
+              data: Array.from({ length: 4 }, () =>
+                Math.floor(Math.random() * 100)
+              ),
               backgroundColor: ["#3e95cd", "#8e5ea2", "#3cba9f", "#e8c3b9"],
             },
           ],

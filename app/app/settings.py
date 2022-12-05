@@ -40,9 +40,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.core.serializers.json',
     'rest_framework',
     'corsheaders',
     'news',
+    'crispy_forms',
 ]
 
 MIDDLEWARE = [
