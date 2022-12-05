@@ -174,7 +174,7 @@
           <button
             type="button"
             class="view-insights-button"
-            data-chart-id="{{ article.liberal }}"
+            data-article-id="{{ article.id }}"
           >
             View Insights
           </button>
@@ -212,42 +212,49 @@
     },
   });
 
+  let chartData = [];
+
   const viewInsightsButtons = document.querySelectorAll(
     ".view-insights-button"
   );
   const modals = document.querySelectorAll(".modal");
 
-  // var articles = "{{ articles.values|safe }}";
-  // articles = articles.replace("<QuerySet ", "");
-  // articles = articles.replace(">", "");
-  // articles = articles.replace("[", "");
-  // articles = articles.replace("]", "");
-  // var articles = JSON.parse(articles);
-  // console.log(articles);
-
   viewInsightsButtons.forEach((button, index) => {
     button.addEventListener("click", function () {
       const modal = modals[index];
+      var articleId = $(this).data("article-id");
+      console.log(articleId);
 
-      // Create a new pie chart using Chart.js
-      const pieChart = new Chart(modal.querySelector(".pieChart"), {
-        type: "pie",
-        data: {
-          labels: ["Liberal", "Conservative", "Socialist", "Autocratic"],
-          datasets: [
-            {
-              data: Array.from({ length: 4 }, () =>
-                Math.floor(Math.random() * 100)
-              ),
-              backgroundColor: ["#3e95cd", "#8e5ea2", "#3cba9f", "#e8c3b9"],
+      $.ajax({
+        url: "/news/" + articleId + "/",
+        type: "GET",
+
+        success: function (response) {
+          // Uncheck the selected radio button
+          chartData = response["values"];
+
+          const pieChart = new Chart(modal.querySelector(".pieChart"), {
+            type: "pie",
+            data: {
+              labels: ["Liberal", "Conservative", "Socialist", "Autocratic"],
+              datasets: [
+                {
+                  data: chartData,
+                  backgroundColor: ["#3e95cd", "#8e5ea2", "#3cba9f", "#e8c3b9"],
+                },
+              ],
             },
-          ],
-        },
-        options: {
-          width: 300,
-          height: 300,
+            options: {
+              width: 300,
+              height: 300,
+            },
+          });
+          // console.log(chartData);
         },
       });
+
+      // Create a new pie chart using Chart.js
+      console.log(chartData);
 
       // Show the modal
       modal.style.display = "block";

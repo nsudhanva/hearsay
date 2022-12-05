@@ -55,6 +55,15 @@ def index(request):
         # Return an HttpResponse with the payload's content
         return HttpResponse(template.render(context, request))
 
+def show(request, article_id):
+    article = NewsArticle.objects.get(id=article_id)
+
+    values = {
+        'values': [int(i) for i in [article.liberal, article.conservative, article.socialist, article.autocratic]]
+    }
+
+    return JsonResponse(values, safe=False)
+
 import pickle
 
 def ml(request):
