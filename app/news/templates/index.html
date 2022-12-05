@@ -6,6 +6,14 @@
 />
 
 <style>
+  .modal {
+    background-color: rgba(255, 255, 255, 0.9);
+    border-radius: 10px;
+    color: black;
+    width: 600px;
+    height: 900px;
+  }
+
   .green-button {
     background-color: green;
     color: white;
@@ -163,6 +171,20 @@
           >
             Vote
           </button>
+          <button type="button" class="view-insights-button">
+            View Insights
+          </button>
+
+          <div class="modal" style="display: none">
+            <h3 class="modal-title">Insights</h3>
+            <p class="modal-description">
+              Here are some insights about the article and its explanations.
+            </p>
+            <div class="close-button">
+              <button type="button" class="close-modal-button">Close</button>
+            </div>
+            <canvas class="pieChart" width="400" height="400"></canvas>
+          </div>
         </div>
       </div>
     </div>
@@ -171,6 +193,7 @@
 </div>
 
 <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js"></script>
 
 <script>
   $.ajaxSetup({
@@ -182,6 +205,49 @@
         xhr.setRequestHeader("X-CSRFToken", "{{ csrf_token }}");
       }
     },
+  });
+
+  var chartData = [];
+
+  const viewInsightsButtons = document.querySelectorAll(
+    ".view-insights-button"
+  );
+  const modals = document.querySelectorAll(".modal");
+
+  viewInsightsButtons.forEach((button, index) => {
+    button.addEventListener("click", function () {
+      const modal = modals[index];
+
+      // Create a new pie chart using Chart.js
+      const pieChart = new Chart(modal.querySelector(".pieChart"), {
+        type: "pie",
+        data: {
+          labels: ["Liberal", "Conservative", "Socialist", "Autocratic"],
+          datasets: [
+            {
+              data: chartData,
+              backgroundColor: ["#3e95cd", "#8e5ea2", "#3cba9f", "#e8c3b9"],
+            },
+          ],
+        },
+        options: {
+          width: 300,
+          height: 300,
+        },
+      });
+
+      // Show the modal
+      modal.style.display = "block";
+    });
+  });
+
+  const closeModalButtons = document.querySelectorAll(".close-modal-button");
+
+  closeModalButtons.forEach((button, index) => {
+    button.addEventListener("click", function () {
+      const modal = modals[index];
+      modal.style.display = "none";
+    });
   });
 
   function showPopup(card) {
