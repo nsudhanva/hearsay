@@ -23,7 +23,6 @@ def index(request):
         # print(df_grouped)
 
         # context['votes'] = df_grouped.to_frame().reset_index().to_json()
-        print(articles.values())
         return HttpResponse(template.render(context, request))
     elif request.method == 'POST':
 

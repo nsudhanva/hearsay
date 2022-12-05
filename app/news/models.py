@@ -11,6 +11,7 @@ class NewsArticle(models.Model):
     liberal = models.CharField(max_length=50, null=True)
     conservative = models.CharField(max_length=50, null=True)
     autocratic = models.CharField(max_length=50, null=True)
+    ml = models.CharField(max_length=50, null=True)
 
 class NewsLabel(models.Model):
     id = models.AutoField(primary_key=True)
