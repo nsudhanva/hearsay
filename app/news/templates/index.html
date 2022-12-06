@@ -12,6 +12,11 @@
     color: black;
     width: 600px;
     height: 900px;
+    position: center;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
   }
 
   .green-button {
@@ -95,7 +100,7 @@
     >
       <a href="{{ article.link }}" class="card-link">
         <img
-          src="https://unsplash.it/640/425?blur"
+          src="https://place-hold.it/640x425"
           class="card-img-top"
           alt="{{ article.headline }}"
         />
@@ -182,7 +187,8 @@
           <div class="modal" style="display: none">
             <h3 class="modal-title">Insights</h3>
             <p class="modal-description">
-              ML Predicted Label: <strong><mark>{{ article.ml }}</mark></strong>
+              ML Predicted Label (~85% model accuracy):
+              <strong><mark>{{ article.ml }}</mark></strong>
             </p>
 
             <div class="close-button">
@@ -232,6 +238,7 @@
         success: function (response) {
           // Uncheck the selected radio button
           chartData = response["values"];
+          console.log(chartData);
 
           const pieChart = new Chart(modal.querySelector(".pieChart"), {
             type: "pie",
