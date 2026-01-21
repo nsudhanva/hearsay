@@ -1,0 +1,183 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// User model for authentication and tracking
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  name          String?
+  passwordHash  String
+  image         String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  votes          Vote[]
+  communityNotes CommunityNote[]
+  noteVotes      NoteVote[]
+  sessions       Session[]
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+// News source with credibility tracking
+model Source {
+  id               String    @id @default(cuid())
+  name             String    @unique
+  url              String?
+  description      String?
+  credibilityScore Float     @default(50) // 0-100 scale
+  biasRating       Float     @default(0)  // -100 (far left) to +100 (far right)
+  articleCount     Int       @default(0)
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+
+  articles Article[]
+}
+
+// Main article model
+model Article {
+  id               String    @id @default(cuid())
+  headline         String
+  shortDescription String
+  content          String?   // Full article content if available
+  sourceUrl        String    @unique
+  imageUrl         String?
+  authors          String?
+  category         String    @default("POLITICS")
+  publishedAt      DateTime
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+
+  // AI Analysis fields
+  aiPredictedBias  String?   // SOCIALIST, LIBERAL, MODERATE, CONSERVATIVE, LIBERTARIAN, AUTOCRATIC
+  aiBiasScore      Float?    // -100 to +100
+  aiConfidence     Float?    // 0-100
+  aiAnalysis       String?   // Detailed analysis text
+  aiAnalyzedAt     DateTime?
+
+  // Aggregated vote stats (denormalized for performance)
+  votesSocialist     Int @default(0)
+  votesLiberal       Int @default(0)
+  votesModerate      Int @default(0)
+  votesConservative  Int @default(0)
+  votesLibertarian   Int @default(0)
+  votesAutocratic    Int @default(0)
+  totalVotes         Int @default(0)
+
+  // Computed bias from votes
+  communityBiasScore Float?
+
+  // Reading metrics
+  readingTimeMinutes Int?
+  wordCount          Int?
+
+  sourceId String?
+  source   Source? @relation(fields: [sourceId], references: [id])
+
+  votes          Vote[]
+  communityNotes CommunityNote[]
+  entities       ArticleEntity[]
+  claims         Claim[]
+}
+
+// Political bias labels enum represented as string
+// SOCIALIST | LIBERAL | MODERATE | CONSERVATIVE | LIBERTARIAN | AUTOCRATIC
+
+// User votes on articles
+model Vote {
+  id        String   @id @default(cuid())
+  biasLabel String   // The political label they voted
+  createdAt DateTime @default(now())
+
+  userId    String
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  articleId String
+  article   Article @relation(fields: [articleId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, articleId]) // One vote per user per article
+}
+
+// Community notes (Twitter/X style)
+model CommunityNote {
+  id              String   @id @default(cuid())
+  content         String
+  status          String   @default("PENDING") // PENDING, APPROVED, REJECTED
+  helpfulVotes    Int      @default(0)
+  notHelpfulVotes Int      @default(0)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  userId    String
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  articleId String
+  article   Article @relation(fields: [articleId], references: [id], onDelete: Cascade)
+
+  noteVotes NoteVote[]
+}
+
+// Votes on community notes
+model NoteVote {
+  id        String   @id @default(cuid())
+  helpful   Boolean
+  createdAt DateTime @default(now())
+
+  userId String
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  noteId String
+  note   CommunityNote @relation(fields: [noteId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, noteId])
+}
+
+// Extracted entities (politicians, parties, states, organizations)
+model Entity {
+  id            String   @id @default(cuid())
+  name          String   @unique
+  type          String   // POLITICIAN, PARTY, STATE, ORGANIZATION
+  description   String?
+  politicalLean Float?   // -100 to +100
+  imageUrl      String?
+  createdAt     DateTime @default(now())
+
+  articles ArticleEntity[]
+}
+
+// Many-to-many relationship between articles and entities
+model ArticleEntity {
+  id        String @id @default(cuid())
+  sentiment String? // POSITIVE, NEGATIVE, NEUTRAL
+  mentions  Int    @default(1) // How many times mentioned
+
+  articleId String
+  article   Article @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  entityId  String
+  entity    Entity  @relation(fields: [entityId], references: [id], onDelete: Cascade)
+
+  @@unique([articleId, entityId])
+}
+
+// Verifiable claims extracted from articles
+model Claim {
+  id                 String   @id @default(cuid())
+  text               String
+  verificationStatus String   @default("UNVERIFIED") // UNVERIFIED, TRUE, FALSE, MISLEADING, PARTIALLY_TRUE
+  factCheckUrl       String?
+  factCheckSource    String?
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  articleId String
+  article   Article @relation(fields: [articleId], references: [id], onDelete: Cascade)
+}
