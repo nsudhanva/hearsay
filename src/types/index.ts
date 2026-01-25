@@ -100,7 +100,7 @@ export const BIAS_LABELS: { value: BiasLabel; label: string; color: string; desc
   {
     value: 'SOCIALIST',
     label: 'Socialist',
-    color: '#DC2626',
+    color: '#4338CA',
     description: 'Far-left ideology emphasizing collective ownership'
   },
   {
@@ -112,25 +112,25 @@ export const BIAS_LABELS: { value: BiasLabel; label: string; color: string; desc
   {
     value: 'MODERATE',
     label: 'Moderate',
-    color: '#8B5CF6',
+    color: '#64748B',
     description: 'Centrist position balancing different viewpoints'
   },
   {
     value: 'CONSERVATIVE',
     label: 'Conservative',
-    color: '#EF4444',
+    color: '#DC2626',
     description: 'Center-right emphasizing tradition and limited government'
   },
   {
     value: 'LIBERTARIAN',
     label: 'Libertarian',
-    color: '#F59E0B',
+    color: '#EA580C',
     description: 'Emphasizing individual liberty and minimal government'
   },
   {
     value: 'AUTOCRATIC',
     label: 'Autocratic',
-    color: '#1F2937',
+    color: '#7F1D1D',
     description: 'Far-right authoritarian ideology'
   },
 ]

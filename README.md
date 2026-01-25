@@ -13,6 +13,77 @@ Hearsay aims to increase media literacy by making political bias visible and tra
 
 ---
 
+## How To Use The App
+
+New to Hearsay? Here's how to get the most out of the platform:
+
+```mermaid
+flowchart TD
+    subgraph Step1["Step 1: Browse Articles"]
+        A1[Visit the home feed]
+        A2[See AI-detected bias badges on each article]
+        A3[Filter by bias type or search keywords]
+    end
+
+    subgraph Step2["Step 2: Read & Evaluate"]
+        B1[Click an article to read details]
+        B2[View the political spectrum visualization]
+        B3[Check entity mentions and claims]
+    end
+
+    subgraph Step3["Step 3: Contribute"]
+        C1[Sign in with your account]
+        C2[Vote on where you think the bias falls]
+        C3[Add community notes for context]
+    end
+
+    subgraph Step4["Step 4: Explore"]
+        D1[Visit Analytics for platform trends]
+        D2[Check Sources for outlet credibility]
+        D3[Use Spectrum view to compare articles]
+    end
+
+    Step1 --> Step2 --> Step3 --> Step4
+```
+
+### Quick Start Guide
+
+| Action | How To |
+|--------|--------|
+| **View articles** | Browse the home feed - each card shows headline, AI bias, and vote count |
+| **Filter by bias** | Click any bias label (Socialist, Liberal, etc.) to filter articles |
+| **Read full article** | Click "Read More" on any card to see full details |
+| **Vote on bias** | Click "Vote" button, then select where you think the article falls on the spectrum |
+| **Add context** | Scroll to "Community Notes" section, sign in, and add helpful context |
+| **Run AI analysis** | On article detail page, click "Analyze with AI" to get bias prediction |
+
+---
+
+## User Journey
+
+```mermaid
+journey
+    title User Journey: Evaluating News Bias
+    section Discovery
+      Land on Hearsay: 5: User
+      Browse news feed: 4: User
+      Notice bias badges: 4: User
+    section Engagement
+      Click article to read: 5: User
+      View bias spectrum: 4: User
+      Check community notes: 4: User
+    section Participation
+      Create account: 3: User
+      Cast first vote: 5: User
+      Add community note: 4: User
+    section Insight
+      View analytics dashboard: 4: User
+      Compare sources: 4: User
+      Share findings: 5: User
+```
+
+---
+
 ## Architecture
 
 ```mermaid
@@ -63,37 +134,37 @@ flowchart TB
 
 ## Political Spectrum
 
-Hearsay uses a 6-point political spectrum for bias classification:
+Hearsay uses a 6-point political spectrum for bias classification. The spectrum flows from **Blue (Left)** to **Gray (Center)** to **Red (Right)**:
 
 ```mermaid
 graph LR
     subgraph Spectrum["Political Spectrum (-100 to +100)"]
-        S["Socialist<br/>-100 to -75"]
-        L["Liberal<br/>-75 to -25"]
-        M["Moderate<br/>-25 to +25"]
-        C["Conservative<br/>+25 to +60"]
-        LB["Libertarian<br/>+60 to +85"]
-        A["Autocratic<br/>+85 to +100"]
+        S["Socialist<br/>Far Left"]
+        L["Liberal<br/>Left"]
+        M["Moderate<br/>Center"]
+        C["Conservative<br/>Right"]
+        LB["Libertarian<br/>Far Right"]
+        A["Autocratic<br/>Auth Right"]
     end
 
     S --> L --> M --> C --> LB --> A
 
-    style S fill:#DC2626,color:#fff
+    style S fill:#4338CA,color:#fff
     style L fill:#2563EB,color:#fff
-    style M fill:#8B5CF6,color:#fff
-    style C fill:#EF4444,color:#fff
-    style LB fill:#F59E0B,color:#fff
-    style A fill:#1F2937,color:#fff
+    style M fill:#64748B,color:#fff
+    style C fill:#DC2626,color:#fff
+    style LB fill:#EA580C,color:#fff
+    style A fill:#7F1D1D,color:#fff
 ```
 
-| Label | Score Range | Description |
-|-------|-------------|-------------|
-| Socialist | -100 to -75 | Far-left ideology emphasizing collective ownership |
-| Liberal | -75 to -25 | Center-left supporting social progress and government programs |
-| Moderate | -25 to +25 | Centrist position balancing different viewpoints |
-| Conservative | +25 to +60 | Center-right emphasizing tradition and limited government |
-| Libertarian | +60 to +85 | Emphasizing individual liberty and minimal government |
-| Autocratic | +85 to +100 | Far-right authoritarian ideology |
+| Label | Score Range | Color | Description |
+|-------|-------------|-------|-------------|
+| Socialist | -100 to -75 | Indigo | Far-left ideology emphasizing collective ownership |
+| Liberal | -75 to -25 | Blue | Center-left supporting social progress and government programs |
+| Moderate | -25 to +25 | Gray | Centrist position balancing different viewpoints |
+| Conservative | +25 to +60 | Red | Center-right emphasizing tradition and limited government |
+| Libertarian | +60 to +85 | Orange | Emphasizing individual liberty and minimal government |
+| Autocratic | +85 to +100 | Dark Red | Far-right authoritarian ideology |
 
 ---
 
@@ -299,6 +370,7 @@ erDiagram
 | **Icons** | Lucide React |
 | **Auth** | Custom (bcrypt) |
 | **Notifications** | React Hot Toast |
+| **Containerization** | Docker + Traefik |
 
 ---
 
@@ -327,31 +399,17 @@ erDiagram
 
 ---
 
-## Screenshots
-
-### Home Feed
-The main feed shows articles with AI-predicted bias badges, community voting counts, and quick-vote buttons.
-
-### Article Detail
-Detailed view with bias spectrum visualization, entity tags, community notes, and verifiable claims.
-
-### Spectrum View
-All articles organized by political lean, from Socialist to Autocratic.
-
-### Analytics Dashboard
-Platform-wide bias distribution charts and top entity/source rankings.
-
----
-
 ## Getting Started
 
-### Prerequisites
+### Option 1: Local Development
+
+#### Prerequisites
 
 - Node.js 18+
 - npm or yarn
 - OpenAI API key
 
-### Installation
+#### Installation
 
 1. **Clone the repository**
    ```bash
@@ -366,10 +424,8 @@ Platform-wide bias distribution charts and top entity/source rankings.
 
 3. **Set up environment variables**
    ```bash
+   cp .env.example .env
    # Edit .env and add your OpenAI API key
-   OPENAI_API_KEY="your-openai-api-key-here"
-   NEXTAUTH_SECRET="your-secret-here"
-   NEXTAUTH_URL="http://localhost:3000"
    ```
 
 4. **Initialize the database**
@@ -389,6 +445,71 @@ Platform-wide bias distribution charts and top entity/source rankings.
 6. **Open the app**
 
    Navigate to [http://localhost:3000](http://localhost:3000)
+
+---
+
+### Option 2: Docker Compose (Recommended for Production)
+
+Run Hearsay with Traefik reverse proxy for a production-like setup:
+
+#### Prerequisites
+- Docker & Docker Compose
+- OpenAI API key
+
+#### Quick Start with Docker
+
+1. **Clone and set up environment**
+   ```bash
+   git clone https://github.com/yourusername/hearsay.git
+   cd hearsay
+
+   # Create .env file
+   echo "OPENAI_API_KEY=your-openai-api-key" > .env
+   ```
+
+2. **Start the containers**
+   ```bash
+   docker-compose up -d
+   ```
+
+3. **Access the application**
+   - **Hearsay App**: [http://hearsay.localhost](http://hearsay.localhost)
+   - **Traefik Dashboard**: [http://traefik.localhost](http://traefik.localhost) or [http://localhost:8080](http://localhost:8080)
+
+4. **Seed the database** (first time only)
+   ```bash
+   docker-compose exec hearsay npx prisma db seed
+   ```
+
+#### Docker Architecture
+
+```mermaid
+flowchart LR
+    subgraph Docker["Docker Compose"]
+        T[Traefik:80/8080]
+        H[Hearsay:3000]
+        V[(Volume: hearsay-data)]
+    end
+
+    Browser -->|hearsay.localhost| T
+    T -->|Route| H
+    H -->|SQLite| V
+
+    style T fill:#00ADD8,color:#fff
+    style H fill:#000,color:#fff
+```
+
+#### Docker Commands
+
+| Command | Description |
+|---------|-------------|
+| `docker-compose up -d` | Start all services |
+| `docker-compose down` | Stop all services |
+| `docker-compose logs -f hearsay` | View app logs |
+| `docker-compose exec hearsay sh` | Shell into container |
+| `docker-compose build --no-cache` | Rebuild images |
+
+---
 
 ### Demo Account
 
@@ -433,6 +554,8 @@ hearsay/
 │   │   └── index.ts       # Zustand store
 │   └── types/
 │       └── index.ts       # TypeScript types
+├── Dockerfile             # Container build
+├── docker-compose.yml     # Multi-container setup
 ├── .env                   # Environment variables
 ├── package.json
 └── README.md
@@ -614,6 +737,20 @@ flowchart TD
 | `OPENAI_API_KEY` | OpenAI API key for bias analysis | Yes |
 | `NEXTAUTH_SECRET` | Secret for session encryption | Yes |
 | `NEXTAUTH_URL` | Base URL of the application | Yes |
+
+---
+
+## Troubleshooting
+
+### Common Issues
+
+| Issue | Solution |
+|-------|----------|
+| **Database not found** | Run `npx prisma migrate dev` then `npm run seed` |
+| **AI analysis fails** | Check your `OPENAI_API_KEY` in `.env` |
+| **Can't login** | Ensure database is seeded: `npm run seed` |
+| **Docker: hearsay.localhost not working** | Add `127.0.0.1 hearsay.localhost` to `/etc/hosts` |
+| **Port 80 in use** | Stop other services or change port in `docker-compose.yml` |
 
 ---
 

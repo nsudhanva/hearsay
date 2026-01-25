@@ -68,12 +68,12 @@ export function getBiasLabel(score: number): string {
 
 export function getBiasColor(bias: string): string {
   const colors: Record<string, string> = {
-    SOCIALIST: '#DC2626',      // Red
-    LIBERAL: '#2563EB',        // Blue
-    MODERATE: '#8B5CF6',       // Purple
-    CONSERVATIVE: '#DC2626',   // Red
-    LIBERTARIAN: '#F59E0B',    // Amber
-    AUTOCRATIC: '#1F2937',     // Gray-800
+    SOCIALIST: '#4338CA',
+    LIBERAL: '#2563EB',
+    MODERATE: '#64748B',
+    CONSERVATIVE: '#DC2626',
+    LIBERTARIAN: '#EA580C',
+    AUTOCRATIC: '#7F1D1D',
   }
   return colors[bias] || '#6B7280'
 }

@@ -6,7 +6,7 @@
 }
 
 .dark {
-  --background: #09090b;
+  --background: #0a0a0a;
   --foreground: #fafafa;
 }
 
@@ -21,12 +21,10 @@ body {
   color: var(--foreground);
 }
 
-/* Smooth scrolling */
 html {
   scroll-behavior: smooth;
 }
 
-/* Custom scrollbar */
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
@@ -53,20 +51,17 @@ html {
   background: #52525b;
 }
 
-/* Political spectrum gradient */
 .bias-gradient {
   background: linear-gradient(
     to right,
-    #dc2626 0%,
+    #4338ca 0%,
     #2563eb 20%,
-    #8b5cf6 40%,
-    #ef4444 60%,
-    #f59e0b 80%,
-    #1f2937 100%
+    #64748b 50%,
+    #dc2626 80%,
+    #7f1d1d 100%
   );
 }
 
-/* Animation utilities */
 @keyframes pulse-soft {
   0%, 100% {
     opacity: 1;
@@ -80,13 +75,34 @@ html {
   animation: pulse-soft 2s ease-in-out infinite;
 }
 
-/* Glass effect */
 .glass {
-  background: rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
 }
 
 .dark .glass {
-  background: rgba(9, 9, 11, 0.7);
+  background: rgba(10, 10, 10, 0.8);
+}
+
+.card-hover {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+}
+
+.dark .card-hover:hover {
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+}
+
+*:focus-visible {
+  outline: 2px solid #2563eb;
+  outline-offset: 2px;
+}
+
+.dark *:focus-visible {
+  outline-color: #60a5fa;
 }

@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import {
   Search,
   Filter,
@@ -10,6 +10,12 @@ import {
   Sparkles,
   RefreshCw,
   ChevronDown,
+  Vote,
+  MessageSquarePlus,
+  Eye,
+  ArrowRight,
+  Info,
+  X,
 } from 'lucide-react'
 import { ArticleCard } from '@/components/article/article-card'
 import { Button } from '@/components/ui/button'
@@ -26,6 +32,7 @@ export default function HomePage() {
   const [search, setSearch] = useState('')
   const [selectedBias, setSelectedBias] = useState<string | null>(null)
   const [showFilters, setShowFilters] = useState(false)
+  const [showHowItWorks, setShowHowItWorks] = useState(true)
 
   const { data, isLoading, refetch } = useQuery({
     queryKey: ['articles', search, selectedBias],
@@ -72,6 +79,27 @@ export default function HomePage() {
 
   const articles: ArticleWithDetails[] = data?.articles || []
 
+  const howItWorksSteps = [
+    {
+      icon: Eye,
+      title: '1. Read Articles',
+      description: 'Browse news articles from various sources. Each shows AI-detected bias and community ratings.',
+      color: 'text-blue-500',
+    },
+    {
+      icon: Vote,
+      title: '2. Vote on Bias',
+      description: 'Click "Vote" to rate where you think an article falls on the political spectrum.',
+      color: 'text-indigo-500',
+    },
+    {
+      icon: MessageSquarePlus,
+      title: '3. Add Context',
+      description: 'Add community notes to provide additional context or fact-checks for other readers.',
+      color: 'text-emerald-500',
+    },
+  ]
+
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
       {/* Hero Section */}
@@ -89,6 +117,84 @@ export default function HomePage() {
         </p>
       </motion.div>
 
+      {/* How It Works - Collapsible */}
+      <AnimatePresence>
+        {showHowItWorks && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            className="mb-8 overflow-hidden rounded-xl border border-blue-200 bg-blue-50 dark:border-blue-900 dark:bg-blue-950/30"
+          >
+            <div className="p-6">
+              <div className="mb-4 flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Info className="h-5 w-5 text-blue-500" />
+                  <h2 className="text-lg font-semibold text-zinc-900 dark:text-white">
+                    How It Works
+                  </h2>
+                </div>
+                <button
+                  onClick={() => setShowHowItWorks(false)}
+                  className="rounded-full p-1 text-zinc-500 hover:bg-zinc-200 dark:hover:bg-zinc-700"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              </div>
+              <div className="grid gap-4 md:grid-cols-3">
+                {howItWorksSteps.map((step, index) => (
+                  <motion.div
+                    key={step.title}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.1 }}
+                    className="flex gap-3"
+                  >
+                    <div className={`flex-shrink-0 ${step.color}`}>
+                      <step.icon className="h-6 w-6" />
+                    </div>
+                    <div>
+                      <h3 className="font-medium text-zinc-900 dark:text-white">
+                        {step.title}
+                      </h3>
+                      <p className="text-sm text-zinc-600 dark:text-zinc-400">
+                        {step.description}
+                      </p>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+              {!user && (
+                <div className="mt-4 flex items-center gap-2 rounded-lg bg-white/50 px-4 py-2 dark:bg-zinc-900/50">
+                  <span className="text-sm text-zinc-600 dark:text-zinc-400">
+                    Sign in to vote and add community notes
+                  </span>
+                  <a
+                    href="/login"
+                    className="inline-flex items-center gap-1 text-sm font-medium text-blue-600 hover:text-blue-700 dark:text-blue-400"
+                  >
+                    Sign In <ArrowRight className="h-3 w-3" />
+                  </a>
+                </div>
+              )}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Show "How it works" button when collapsed */}
+      {!showHowItWorks && (
+        <motion.button
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          onClick={() => setShowHowItWorks(true)}
+          className="mb-4 flex items-center gap-2 text-sm text-zinc-500 hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-300"
+        >
+          <Info className="h-4 w-4" />
+          Show how it works
+        </motion.button>
+      )}
+
       {/* Platform Stats */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
@@ -101,16 +207,17 @@ export default function HomePage() {
             label: 'Articles Analyzed',
             value: data?.pagination?.total || 0,
             icon: Sparkles,
+            color: 'text-blue-500',
           },
-          { label: 'Community Votes', value: '10K+', icon: TrendingUp },
-          { label: 'AI Accuracy', value: '~85%', icon: Sparkles },
-          { label: 'Active Users', value: '500+', icon: TrendingUp },
+          { label: 'Community Votes', value: '10K+', icon: Vote, color: 'text-indigo-500' },
+          { label: 'AI Accuracy', value: '~85%', icon: Sparkles, color: 'text-emerald-500' },
+          { label: 'Active Users', value: '500+', icon: TrendingUp, color: 'text-amber-500' },
         ].map((stat) => (
           <div
             key={stat.label}
             className="rounded-xl border border-zinc-200 bg-white p-4 dark:border-zinc-800 dark:bg-zinc-900"
           >
-            <stat.icon className="mb-2 h-5 w-5 text-blue-500" />
+            <stat.icon className={`mb-2 h-5 w-5 ${stat.color}`} />
             <p className="text-2xl font-bold text-zinc-900 dark:text-white">
               {stat.value}
             </p>
@@ -128,16 +235,21 @@ export default function HomePage() {
         transition={{ delay: 0.2 }}
         className="mb-8 rounded-xl border border-zinc-200 bg-white p-6 dark:border-zinc-800 dark:bg-zinc-900"
       >
-        <h2 className="mb-4 text-lg font-semibold text-zinc-900 dark:text-white">
-          Political Spectrum
-        </h2>
+        <div className="mb-4 flex items-center justify-between">
+          <h2 className="text-lg font-semibold text-zinc-900 dark:text-white">
+            Political Spectrum
+          </h2>
+          <span className="text-xs text-zinc-500 dark:text-zinc-400">
+            Click a label to filter articles
+          </span>
+        </div>
         <BiasSpectrum score={0} size="lg" />
         <div className="mt-4 flex flex-wrap justify-between gap-2">
           {BIAS_LABELS.map((bias) => (
             <Badge
               key={bias.value}
               variant={bias.value.toLowerCase() as any}
-              className="cursor-pointer"
+              className={`cursor-pointer transition-all ${selectedBias === bias.value ? 'ring-2 ring-offset-2 ring-zinc-400 dark:ring-zinc-600' : 'hover:scale-105'}`}
               onClick={() =>
                 setSelectedBias(selectedBias === bias.value ? null : bias.value)
               }
@@ -146,6 +258,11 @@ export default function HomePage() {
             </Badge>
           ))}
         </div>
+        {selectedBias && (
+          <p className="mt-3 text-sm text-zinc-600 dark:text-zinc-400">
+            {BIAS_LABELS.find(b => b.value === selectedBias)?.description}
+          </p>
+        )}
       </motion.div>
 
       {/* Search and Filters */}
@@ -154,7 +271,7 @@ export default function HomePage() {
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-400" />
           <Input
             type="text"
-            placeholder="Search articles..."
+            placeholder="Search articles by headline or topic..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="pl-10"
@@ -171,38 +288,43 @@ export default function HomePage() {
               className={`ml-2 h-4 w-4 transition-transform ${showFilters ? 'rotate-180' : ''}`}
             />
           </Button>
-          <Button variant="outline" onClick={() => refetch()}>
+          <Button variant="outline" onClick={() => refetch()} title="Refresh articles">
             <RefreshCw className="h-4 w-4" />
           </Button>
         </div>
       </div>
 
       {/* Filter Chips */}
-      {showFilters && (
-        <motion.div
-          initial={{ opacity: 0, height: 0 }}
-          animate={{ opacity: 1, height: 'auto' }}
-          className="mb-6 flex flex-wrap gap-2"
-        >
-          <Button
-            variant={selectedBias === null ? 'default' : 'outline'}
-            size="sm"
-            onClick={() => setSelectedBias(null)}
+      <AnimatePresence>
+        {showFilters && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            className="mb-6 overflow-hidden"
           >
-            All
-          </Button>
-          {BIAS_LABELS.map((bias) => (
-            <Button
-              key={bias.value}
-              variant={selectedBias === bias.value ? 'default' : 'outline'}
-              size="sm"
-              onClick={() => setSelectedBias(bias.value)}
-            >
-              {bias.label}
-            </Button>
-          ))}
-        </motion.div>
-      )}
+            <div className="flex flex-wrap gap-2 pb-2">
+              <Button
+                variant={selectedBias === null ? 'default' : 'outline'}
+                size="sm"
+                onClick={() => setSelectedBias(null)}
+              >
+                All
+              </Button>
+              {BIAS_LABELS.map((bias) => (
+                <Button
+                  key={bias.value}
+                  variant={selectedBias === bias.value ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => setSelectedBias(bias.value)}
+                >
+                  {bias.label}
+                </Button>
+              ))}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Articles Grid */}
       {isLoading ? (

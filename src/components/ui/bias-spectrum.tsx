@@ -2,6 +2,7 @@
 
 import * as React from 'react'
 import { motion } from 'framer-motion'
+import { ChevronDown } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 interface BiasSpectrumProps {
@@ -28,9 +29,9 @@ export function BiasSpectrum({
   }
 
   const markerSizes = {
-    sm: 'h-4 w-4',
-    md: 'h-5 w-5',
-    lg: 'h-6 w-6',
+    sm: 'h-3 w-3',
+    md: 'h-4 w-4',
+    lg: 'h-5 w-5',
   }
 
   return (
@@ -38,12 +39,11 @@ export function BiasSpectrum({
       <div
         className={cn(
           'relative w-full rounded-full',
-          heights[size],
-          'bg-gradient-to-r from-red-500 via-blue-500 via-purple-500 via-red-400 via-amber-500 to-zinc-800'
+          heights[size]
         )}
         style={{
           background:
-            'linear-gradient(to right, #DC2626 0%, #2563EB 20%, #8B5CF6 40%, #EF4444 60%, #F59E0B 80%, #1F2937 100%)',
+            'linear-gradient(to right, #4338CA 0%, #2563EB 20%, #64748B 50%, #DC2626 80%, #7F1D1D 100%)',
         }}
       >
         {animated ? (
@@ -51,27 +51,37 @@ export function BiasSpectrum({
             initial={{ left: '50%' }}
             animate={{ left: `${position}%` }}
             transition={{ type: 'spring', stiffness: 100, damping: 15 }}
-            className={cn(
-              'absolute top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white bg-white shadow-lg',
-              markerSizes[size]
-            )}
-          />
+            className="absolute -top-1 -translate-x-1/2"
+          >
+            <ChevronDown
+              className={cn(
+                markerSizes[size],
+                'text-zinc-900 dark:text-white drop-shadow-md'
+              )}
+              strokeWidth={3}
+            />
+          </motion.div>
         ) : (
           <div
-            className={cn(
-              'absolute top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white bg-white shadow-lg',
-              markerSizes[size]
-            )}
+            className="absolute -top-1 -translate-x-1/2"
             style={{ left: `${position}%` }}
-          />
+          >
+            <ChevronDown
+              className={cn(
+                markerSizes[size],
+                'text-zinc-900 dark:text-white drop-shadow-md'
+              )}
+              strokeWidth={3}
+            />
+          </div>
         )}
       </div>
 
       {showLabels && (
-        <div className="mt-2 flex justify-between text-xs text-zinc-500 dark:text-zinc-400">
-          <span>Left</span>
-          <span>Center</span>
-          <span>Right</span>
+        <div className="mt-3 flex justify-between text-xs font-medium">
+          <span className="text-indigo-600 dark:text-indigo-400">Left</span>
+          <span className="text-slate-500 dark:text-slate-400">Center</span>
+          <span className="text-red-600 dark:text-red-400">Right</span>
         </div>
       )}
     </div>

@@ -1,0 +1,54 @@
+services:
+  # Traefik Reverse Proxy
+  traefik:
+    image: traefik:v3.0
+    container_name: hearsay-traefik
+    command:
+      - "--api.insecure=true"
+      - "--api.dashboard=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+      - "--log.level=INFO"
+    ports:
+      - "80:80"
+      - "8080:8080"  # Traefik Dashboard
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    networks:
+      - hearsay-network
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.traefik.rule=Host(`traefik.localhost`)"
+      - "traefik.http.routers.traefik.service=api@internal"
+
+  # Hearsay Application
+  hearsay:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: hearsay-app
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL=file:/app/data/hearsay.db
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-your-openai-api-key}
+    volumes:
+      - hearsay-data:/app/data
+    networks:
+      - hearsay-network
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.hearsay.rule=Host(`hearsay.localhost`)"
+      - "traefik.http.routers.hearsay.entrypoints=web"
+      - "traefik.http.services.hearsay.loadbalancer.server.port=3000"
+    depends_on:
+      - traefik
+    restart: unless-stopped
+
+networks:
+  hearsay-network:
+    driver: bridge
+
+volumes:
+  hearsay-data:
+    driver: local
