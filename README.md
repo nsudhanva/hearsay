@@ -797,7 +797,7 @@ MIT License - see [LICENSE](LICENSE) for details.
 
 ## Authors
 
-- **Sudhanva Narayana** - [GitHub](https://github.com/sudhanva)
+- **Sudhanva Narayana** - [GitHub](https://github.com/nsudhanva)
 - **Ananth Narasimhan** - Original concept co-author
 
 ---
